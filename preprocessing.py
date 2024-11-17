@@ -4,6 +4,7 @@ import numpy as np
 from PIL import Image
 from tqdm import tqdm
 from scipy.interpolate import interp1d
+import cv2  # For resizing masks
 
 # Paths
 dataset_dir = "data"  # Replace with your dataset folder path
@@ -17,7 +18,7 @@ TABLE_MIDPOINT = IMG_WIDTH // 2  # Divide table into left/right sides
 
 
 def preprocess_ball_annotations(markup_file, output_dir, img_width=IMG_WIDTH, img_height=IMG_HEIGHT):
-    """Preprocess ball_markup.json into YOLO format."""
+    """Preprocess ball_markup.json into YOLO format with normalized coordinates."""
     with open(markup_file, 'r') as f:
         data = json.load(f)
 
@@ -47,17 +48,20 @@ def preprocess_event_annotations(event_file, output_dir):
                 lbl_file.write("0\n")  # Label for empty event
 
 
-def preprocess_segmentation_masks(mask_folder, output_dir):
-    """Extract table, net, and player regions from segmentation masks."""
+def preprocess_segmentation_masks(mask_folder, output_dir, target_width=IMG_WIDTH, target_height=IMG_HEIGHT):
+    """Resize and extract table, net, and player regions from segmentation masks."""
     for mask_file in tqdm(os.listdir(mask_folder), desc=f"Processing {mask_folder}"):
         frame_number = mask_file.split(".")[0]
         mask_path = os.path.join(mask_folder, mask_file)
         mask = np.array(Image.open(mask_path))
 
+        # Resize mask to match the target resolution
+        mask_resized = cv2.resize(mask, (target_width, target_height), interpolation=cv2.INTER_NEAREST)
+
         # Extract table (red), net (blue), and players (green)
-        table_mask = (mask[:, :, 0] > 0) & (mask[:, :, 1] == 0) & (mask[:, :, 2] == 0)  # Red region
-        net_mask = (mask[:, :, 2] > 0) & (mask[:, :, 0] == 0) & (mask[:, :, 1] == 0)  # Blue region
-        player_mask = (mask[:, :, 1] > 0) & (mask[:, :, 0] == 0) & (mask[:, :, 2] == 0)  # Green region
+        table_mask = (mask_resized[:, :, 0] > 0) & (mask_resized[:, :, 1] == 0) & (mask_resized[:, :, 2] == 0)  # Red region
+        net_mask = (mask_resized[:, :, 2] > 0) & (mask_resized[:, :, 0] == 0) & (mask_resized[:, :, 1] == 0)  # Blue region
+        player_mask = (mask_resized[:, :, 1] > 0) & (mask_resized[:, :, 0] == 0) & (mask_resized[:, :, 2] == 0)  # Green region
 
         # Ensure boolean masks are converted to uint8 for saving
         table_mask = table_mask.astype(np.uint8)

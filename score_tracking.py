@@ -2,7 +2,6 @@ import os
 import json
 import numpy as np
 import matplotlib.pyplot as plt
-from PIL import Image
 
 # Constants
 IMG_WIDTH = 1920
@@ -83,18 +82,11 @@ def score_tracking(rallies_file, trajectory_file):
     return final_scores
 
 
-def resize_mask(mask, target_width, target_height):
-    """Resize the segmentation mask to match the trajectory resolution."""
-    return np.array(Image.fromarray(mask).resize((target_width, target_height), Image.NEAREST))
-
 def visualize_all_rallies(trajectory_file, all_rallies, table_mask, net_mask, table_width=1920, table_height=1080):
     """Visualize the trajectory for all rallies with scaled masks."""
     with open(trajectory_file, "r") as f:
         trajectory = json.load(f)
 
-    # Resize masks to match trajectory resolution
-    table_mask = resize_mask(table_mask, table_width, table_height)
-    net_mask = resize_mask(net_mask, table_width, table_height)
 
     plt.figure(figsize=(15, 8))
     plt.imshow(table_mask, cmap="Reds", alpha=0.3, extent=[0, table_width, 0, table_height])
