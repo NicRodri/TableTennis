@@ -159,7 +159,7 @@ def process_all_folders(dataset_dir, output_root):
 
                 # Segment rallies
                 rallies = segment_rallies(event_markup_file)
-                with open(os.path.join(output_dir, "rallies.json"), "w") as f:
+                with open(os.path.join(output_dir, "rallies.json"), "w") as f: 
                     json.dump(rallies, f)
 
             # Process segmentation masks if folder exists
