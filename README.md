@@ -28,7 +28,7 @@ make
 ```
 Once done make sure you move the ball_v1* (aka .weights, .data, .cfg, .names) and video file (aka test video to track scoring) to the darknet directory. The video can be found on the nextcloud, and the ball_v1* can be found in our repo. Jeffs version is in main and Nico's version is in small_imgs branch.
 
-Then go to ball_v1.data and change the names to the directory your darknet folder is in as seen below:
+Then go to ball_v1.data and change the names to the directory your darknet folder similar to what is seen below:
 ```
 names = /root/scarlet/darknet/ball_v1.names
 ```
