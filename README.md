@@ -40,3 +40,13 @@ Once you finish that run the following to test the video:
 ./darknet detector demo ball_v1.data ball_v1.cfg ball_v1_best.weights -ext_output WIN_20241124_11_54_55_Pro.mp4
 ```
 Note the training video here was used for reference, any video can be used. The video is available on nextcloud and found in our discord chat.
+
+Scoring can be modified in image_opencv.cpp found in the darknet/src folder. to apply changes run 
+```
+make clean
+```
+Followed by 
+```
+make
+```
+
